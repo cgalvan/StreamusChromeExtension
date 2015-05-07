@@ -88,7 +88,7 @@ define(function() {
 
                 // We only come here once, but since we are decorating the
                 // element after it has been hovered over, we need to trigger
-                // the 'mouseenter' again to get desired tooltip behavior.
+                // the 'mouseenter' again to make the tooltip appear.
                 this.$el.trigger('mouseenter');
             }
         },
