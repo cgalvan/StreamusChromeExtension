@@ -32,6 +32,7 @@
             'wheel @ui.timeRange': '_onWheelTimeRange',
             'mousedown @ui.timeRange': '_onMouseDownTimeRange',
             'mouseup @ui.timeRange': '_onMouseUpTimeRange',
+            'mousemove @ui.timeRange': '_onMouseMoveTimeRange',
             'click @ui.elapsedTimeLabel': '_onClickElapsedTimeLabel'
         },
 
@@ -59,6 +60,21 @@
         onRender: function() {
             this._setCurrentTime(this.player.get('currentTime'));
             this._setElapsedTimeLabelTitle(this.model.get('showRemainingTime'));
+
+            // Customized parameters for the seeking time tooltip.
+            this.ui.timeRange.qtip({
+                position: {
+                    my: 'bottom center',
+                    at: 'top center',
+                    target: 'mouse',
+                    adjust: {
+                        y: -2
+                    }
+                },
+                show: {
+                    delay: 0
+                }
+            });
         },
 
         _onInputTimeRange: function() {
@@ -88,6 +104,16 @@
             if (event.which === 1 && this.model.get('seeking')) {
                 this._seekToCurrentTime();
             }
+        },
+
+        _onMouseMoveTimeRange: function(event) {
+            // Calculate the seeked time based on mouse position and update
+            // the title so it can be used for the tooltip.
+            var totalTime = this.ui.timeRange.prop('max');
+            var scrollWidth = this.ui.timeRange.prop('scrollWidth');
+            var offsetX = event.originalEvent.offsetX;
+            var seekTime = (offsetX * totalTime) / scrollWidth;
+            this.ui.timeRange.attr('title', Utility.prettyPrintTime(Math.floor(seekTime)));
         },
 
         _onClickElapsedTimeLabel: function() {
