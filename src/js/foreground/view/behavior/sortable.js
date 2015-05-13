@@ -13,7 +13,19 @@
             'mouseenter': '_onMouseEnter'
         },
 
+        initialize: function() {
+            this.listenTo(Streamus.channels.foregroundArea.vent, 'idle', this._onForegroundAreaIdle);
+        },
+
+        _onForegroundAreaIdle: function() {
+            this._decorate();
+        },
+
         _onMouseEnter: function () {
+            this._decorate();
+        },
+
+        _decorate: function() {
             //  There's no reason to take this perf hit unless the user is actually going to use sortable logic.
             //  So, only run it once the user could potentially need to do so.
             if (!this.isDecorated) {
@@ -229,10 +241,9 @@
             if (moved) {
                 //  If a move happened call sort without silent so that views can update accordingly.
                 this.view.collection.sort();
-                //  TODO: Trigger an event which causes the scrollbar to update instead.
                 //  Need to update the scrollbar because if the drag-and-drop placeholder pushed scrollTop beyond its normal limits
                 //  then the scrollbar is not representing the correct height after the placeholder is removed.
-                this.view._behaviors[1]._updateScrollbar();
+                this.view.triggerMethod('UpdateScrollbar');
             }
         },
 

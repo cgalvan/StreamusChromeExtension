@@ -5,7 +5,6 @@
 define(function() {
     'use strict';
 
-    //  TODO: There might be a more elegant way to initialize these, but I definitely don't want to query for the window every time.
     $.extend($.fn.qtip.defaults.position, {
         viewport: $(window),
         my: 'top center',
@@ -16,8 +15,9 @@ define(function() {
         })
     });
 
+    var tooltipDelay = 200;
     $.extend($.fn.qtip.defaults.show, {
-        delay: 200
+        delay: tooltipDelay
     });
 
     var Tooltip = Marionette.Behavior.extend({
@@ -56,11 +56,23 @@ define(function() {
 
         _onMouseEnter: function() {
             //  Defer applying tooltips until absolutely necessary for rendering performance.
-            if (!this.isDecorated) {
-                this.isDecorated = true;
-                //  Wrap in a RAF to allow for :hover effects to take place which might affect whether textTooltipable overflows or not.
-                requestAnimationFrame(this._setTooltips.bind(this));
-            }
+            //if (!this.isDecorated) {
+            //    this.isDecorated = true;
+
+            //    //  Wrap in a RAF to allow for :hover effects to take place which might affect whether textTooltipable overflows or not.
+            //    requestAnimationFrame(function() {
+            //        this._setTooltips();
+
+            //        //  Since calling toggle will force the tooltip to show -- wait the normal delay amount to emulate its effect.
+            //        setTimeout(function() {
+            //            if (!this.view.isDestroyed && this.$el.is(':hover')) {
+            //                //  This forces a tooltip to appear immediately if it exists. This is necessary because decorating
+            //                //  the element has been delayed until mouseenter for performance, but that is when tooltip rendering triggers, too
+            //                this.$el.qtip('toggle', true);
+            //            }
+            //        }.bind(this), tooltipDelay);
+            //    }.bind(this));
+            //}
         },
 
         _setTooltips: function() {
@@ -86,12 +98,6 @@ define(function() {
                     }, this);
                 }
             }
-
-            // We only come here the first time the element is hovered over,
-            // but since we don't decorate the element until after it has been
-            // hovered over, we need to trigger the 'mouseenter' again to make
-            // the tooltip appear.
-            this.$el.trigger('mouseenter');
         },
 
         _decorateTooltipable: function(tooltipableElement) {
@@ -115,7 +121,7 @@ define(function() {
         
         //  Whenever an element's title changes -- need to re-check to see if a title exists / if the element is overflowing and apply/remove the tooltip accordingly.
         _setTitleMutationObserver: function(element, checkOverflow) {
-            var titleMutationObserver = new window.MutationObserver(function(mutations) {
+            var titleMutationObserver = new MutationObserver(function(mutations) {
                 mutations.forEach(function(mutation) {
                     var oldTitle = mutation.attributeName === 'title' ? mutation.oldValue : undefined;
                     this._setTitleTooltip(element, checkOverflow, oldTitle);

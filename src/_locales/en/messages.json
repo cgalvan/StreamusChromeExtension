@@ -524,5 +524,23 @@
     },
     "playlistUrl": {
         "message": "Playlist URL"
+    },
+    "aboutStreamus": {
+        "message": "About Streamus"
+    },
+    "applicationDetails": {
+        "message": "Application details"
+    },
+    "openHomepage": {
+        "message": "Open homepage"
+    },
+    "version": {
+        "message": "Version"
+    },
+    "openPatchNotes": {
+        "message": "Open patch notes"
+    },
+    "moreActions": { 
+        "message":  "More actions"
     }
 }

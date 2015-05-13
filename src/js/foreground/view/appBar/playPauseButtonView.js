@@ -41,7 +41,7 @@
         },
 
         onRender: function() {
-            this._setState(this.model.get('enabled'), this.player.get('state'));
+            this._setState(this.model.get('enabled'));
         },
 
         _onClick: function() {
@@ -56,16 +56,16 @@
             this._setState(enabled, this.player.get('state'));
         },
 
-        _onPlayerChangeState: function(model, state) {
-            this._setState(this.model.get('enabled'), state);
+        _onPlayerChangeState: function() {
+            this._setState(this.model.get('enabled'));
         },
 
-        _setState: function(enabled, playerState) {
+        _setState: function(enabled) {
             this.$el.toggleClass('is-disabled', !enabled);
 
-            //  TODO: There's a difference between buffering-->play and buffering-->paused. Don't want to change button when buffering-->paused. How to tell the difference?
-            this.ui.pauseIcon.toggleClass('is-hidden', playerState !== PlayerState.Playing && playerState !== PlayerState.Buffering);
-            this.ui.playIcon.toggleClass('is-hidden', playerState === PlayerState.Playing || playerState === PlayerState.Buffering);
+            var isPausable = this.player.isPausable();
+            this.ui.pauseIcon.toggleClass('is-hidden', !isPausable);
+            this.ui.playIcon.toggleClass('is-hidden', isPausable);
         }
     });
 

@@ -30,6 +30,10 @@
             });
         },
 
+        showWebsite: function(url) {
+            this._showTab(url);
+        },
+
         showStreamusTab: function() {
             this._showTab(this.get('streamusForegroundUrl'));
         },
@@ -100,7 +104,6 @@
         },
 
         _highlightTabs: function(highlightInfo) {
-            //  TODO: The callback will be optional once Google resolves https://code.google.com/p/chromium/issues/detail?id=417564
             chrome.tabs.highlight(highlightInfo, _.noop);
         },
 
