@@ -2,9 +2,10 @@
     'use strict';
 
     var TimeArea = require('foreground/model/timeArea');
-    var Tooltip = require('foreground/view/behavior/tooltip');
+    var Tooltipable = require('foreground/view/behavior/tooltipable');
     var TimeAreaView = require('foreground/view/stream/timeAreaView');
     var ActiveStreamItemTemplate = require('text!template/stream/activeStreamItem.html');
+    var ContextMenuAction = require('foreground/model/contextMenuAction');
 
     var ActiveStreamItemView = Marionette.LayoutView.extend({
         id: 'activeStreamItem',
@@ -17,16 +18,22 @@
             };
         },
 
+        events: {
+            'contextmenu': '_onContextMenu'
+        },
+
         behaviors: {
-            Tooltip: {
-                behaviorClass: Tooltip
+            Tooltipable: {
+                behaviorClass: Tooltipable
             }
         },
 
         instant: false,
+        player: null,
 
         initialize: function(options) {
             this.instant = options.instant;
+            this.player = Streamus.backgroundPage.player;
         },
 
         onRender: function() {
@@ -62,6 +69,15 @@
             this.$el.removeClass('is-instant is-visible');
         },
 
+        showContextMenu: function () {
+            var contextMenuAction = new ContextMenuAction({
+                song: this.model.get('song'),
+                player: this.player
+            });
+
+            contextMenuAction.showContextMenu();
+        },
+
         _onTransitionInComplete: function(event) {
             if (event.target === event.currentTarget) {
                 this.$el.off('webkitTransitionEnd');
@@ -75,6 +91,11 @@
                 Streamus.channels.activeStreamItemArea.vent.trigger('hidden');
                 this.destroy();
             }
+        },
+
+        _onContextMenu: function () {
+            event.preventDefault();
+            this.showContextMenu();
         }
     });
 
